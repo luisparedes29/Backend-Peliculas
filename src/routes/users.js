@@ -1,13 +1,12 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express');
+const { registerUser, loginUser } = require('../routes/controllers/users');
+const router = express.Router();
 
-/* GET users listing. */
-router
-  .get('/', function (req, res, next) {
-    res.send('respond with a resource')
-  })
-  .get('/:id', function (req, res) {
-    res.send('respond with a resource')
-  })
+// Ruta para registrar admin
+router.post('/signup', registerUser)
+
+// Ruta para iniciar sesion
+router.post('/login', loginUser)
+
 
 module.exports = router
