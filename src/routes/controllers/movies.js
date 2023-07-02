@@ -1,10 +1,10 @@
 const Pelicula = require('../../models/movies')
 
 //Funcion para obtener todas las peliculas
-const getAllMovies = async () => {
+const getAllMovies = async (req, res) => {
   try {
     const movies = await Pelicula.find()
-    return movies
+    res.json({ movies })
   } catch (error) {
     return error
   }

@@ -1,11 +1,23 @@
 const Pelicula = require('../../models/movies')
 const Comentario = require('../../models/comments')
 
+//controlador para obtener todos los comentarios
+
+const getAllComentarios = async (req, res) => {
+  try {
+    const comentarios = await Comentario.find()
+    res.json(comentarios)
+  } catch (error) {
+    res.json(error)
+  }
+}
+
 // Controlador para agregar un nuevo comentario a una película
 const agregarComentario = async (req, res) => {
   try {
     // Obtener el ID de la película y el contenido del comentario desde el cuerpo de la solicitud
-    const { usuarioId, peliculaId, contenido } = req.body
+    const { usuarioId, contenido } = req.body
+    const peliculaId = req.params.id
 
     // Verificar si la película existe en la base de datos
     const pelicula = await Pelicula.findById(peliculaId)
@@ -23,7 +35,7 @@ const agregarComentario = async (req, res) => {
     pelicula.comentarios.push(nuevoComentario._id)
     await pelicula.save()
 
-    res.status(201).json({ comentario: nuevoComentario })
+    res.status(201).json({ nuevoComentario })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -43,17 +55,29 @@ const editarComentario = async (req, res) => {
     }
 
     // Verificar si el comentario pertenece al usuario actual
-    if (comentario.usuario.toString() !== usuarioId) {
-      return res
-        .status(403)
-        .json({ error: 'No tienes permisos para editar este comentario' })
-    }
+    // if (comentario.usuario.toString() !== usuarioId) {
+    //   return res
+    //     .status(403)
+    //     .json({ error: 'No tienes permisos para editar este comentario' });
+    // }
 
     // Actualizar el contenido del comentario
     comentario.contenido = nuevoContenido
     const comentarioActualizado = await comentario.save()
 
-    res.status(200).json({ comentario: comentarioActualizado })
+    // Actualizar el contenido del comentario en la película asociada
+    const pelicula = await Pelicula.findOne({ comentarios: comentarioId })
+    if (pelicula) {
+      const comentarioIndex = pelicula.comentarios.findIndex(
+        (id) => id.toString() === comentarioId
+      )
+      if (comentarioIndex !== -1) {
+        pelicula.comentarios[comentarioIndex].contenido = nuevoContenido
+        await pelicula.save()
+      }
+    }
+
+    res.status(200).json({ comentarioActualizado })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -85,6 +109,7 @@ const eliminarComentario = async (req, res) => {
 }
 
 module.exports = {
+  getAllComentarios,
   agregarComentario,
   editarComentario,
   eliminarComentario,
