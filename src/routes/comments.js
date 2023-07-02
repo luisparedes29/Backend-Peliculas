@@ -9,7 +9,7 @@ const {
 
 /* GET home page. */
 router
-  .get('/:id', getAllComentarios)
+  .get('/', getAllComentarios)
   .post('/new/:id', agregarComentario)
   .delete('/delete/:id', eliminarComentario)
   .put('/update/:id', editarComentario)
