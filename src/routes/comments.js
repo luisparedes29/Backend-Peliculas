@@ -10,7 +10,7 @@ const {
 /* GET home page. */
 router
   .get('/', getAllComentarios)
-  .post('/new', agregarComentario)
+  .post('/new/:id', agregarComentario)
   .delete('/delete/:id', eliminarComentario)
   .put('/update/:id', editarComentario)
 

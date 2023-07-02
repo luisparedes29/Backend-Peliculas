@@ -45,7 +45,7 @@ const agregarComentario = async (req, res) => {
 const editarComentario = async (req, res) => {
   try {
     // Obtener el ID del comentario y el nuevo contenido desde el cuerpo de la solicitud
-    const { usuarioId, nuevoContenido } = req.body
+    const { nuevoContenido } = req.body
     const comentarioId = req.params.id
 
     // Verificar si el comentario existe en la base de datos
