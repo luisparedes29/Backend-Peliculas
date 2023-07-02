@@ -1,5 +1,7 @@
 var express = require('express')
 var router = express.Router()
+const upload = require('.././middleware/multer')
+
 const {
   getMovieById,
   createMovie,
@@ -12,8 +14,8 @@ const {
 router
   .get('/', getAllMovies)
   .get('/:id', getMovieById)
-  .post('/create', createMovie)
+  .post('/create', upload.single('image'), createMovie)
   .delete('/delete/:id', deleteMovie)
-  .put('/update/:id', updateMovie)
+  .put('/update/:id', upload.single('image'), updateMovie)
 
 module.exports = router
