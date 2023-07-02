@@ -1,5 +1,6 @@
 const Pelicula = require('../../models/movies')
 const Comentario = require('../../models/comments')
+const mongoose = require('mongoose')
 
 //controlador para obtener todos los comentarios
 
@@ -19,10 +20,29 @@ const agregarComentario = async (req, res) => {
     const { usuarioId, contenido } = req.body
     const peliculaId = req.params.id
 
+    // Verificar si el peliculaId es un valor válido
+    if (!peliculaId || !mongoose.isValidObjectId(peliculaId)) {
+      return res
+        .status(400)
+        .json({ error: 'ID de película inválido o no ha sido enviado' })
+    }
+
     // Verificar si la película existe en la base de datos
     const pelicula = await Pelicula.findById(peliculaId)
     if (!pelicula) {
       return res.status(404).json({ error: 'La película no existe' })
+    }
+
+    // Verificar si el usuarioId es un valor válido
+    if (!usuarioId || !mongoose.isValidObjectId(usuarioId)) {
+      return res
+        .status(400)
+        .json({ error: 'ID de usuario inválido o no ha sido enviado' })
+    }
+
+    // Verificar si los datos de entrada son válidos
+    if (!contenido) {
+      return res.status(400).json({ error: 'Faltan datos de entrada' })
     }
 
     // Crear una nueva instancia del modelo Comentario con los datos recibidos
@@ -45,8 +65,13 @@ const agregarComentario = async (req, res) => {
 const editarComentario = async (req, res) => {
   try {
     // Obtener el ID del comentario y el nuevo contenido desde el cuerpo de la solicitud
-    const { nuevoContenido } = req.body
+    const { usuarioId, nuevoContenido, esAdmin } = req.body
     const comentarioId = req.params.id
+
+    // Verificar si el comentarioId es un valor válido
+    if (!comentarioId || !mongoose.isValidObjectId(comentarioId)) {
+      return res.status(400).json({ error: 'ID de comentario inválido' })
+    }
 
     // Verificar si el comentario existe en la base de datos
     const comentario = await Comentario.findById(comentarioId)
@@ -54,12 +79,19 @@ const editarComentario = async (req, res) => {
       return res.status(404).json({ error: 'El comentario no existe' })
     }
 
-    // Verificar si el comentario pertenece al usuario actual
-    // if (comentario.usuario.toString() !== usuarioId) {
-    //   return res
-    //     .status(403)
-    //     .json({ error: 'No tienes permisos para editar este comentario' });
-    // }
+    // Verificar si el comentario pertenece al usuario actual o si es un administrador
+    if (comentario.usuario.toString() !== usuarioId && !esAdmin) {
+      return res
+        .status(403)
+        .json({ error: 'No tienes permisos para editar este comentario' })
+    }
+
+    // Verificar si los datos de entrada son válidos
+    if (!nuevoContenido) {
+      return res
+        .status(400)
+        .json({ error: 'Falta el contenido del comentario' })
+    }
 
     // Actualizar el contenido del comentario
     comentario.contenido = nuevoContenido
@@ -86,14 +118,33 @@ const editarComentario = async (req, res) => {
 //eliminar comentario tanto de la coleccion como de las peliculas
 const eliminarComentario = async (req, res) => {
   try {
-    const { peliculaId } = req.body
+    const { peliculaId, usuarioId, isAdmin } = req.body
     const comentarioId = req.params.id
-    // Verificar si el comentario existe en la base de datos y eliminamos
-    const comentario = await Comentario.findByIdAndDelete(comentarioId)
+
+    // Verificar si el comentarioId es un valor válido
+    if (!comentarioId || !mongoose.isValidObjectId(comentarioId)) {
+      return res.status(400).json({ error: 'ID de comentario inválido' })
+    }
+
+    // Verificar si el comentario existe en la base de datos y eliminarlo
+    const comentario = await Comentario.findById(comentarioId)
     if (!comentario) {
       return res.status(404).json({ error: 'El comentario no existe' })
     }
-    // eliminamos el comentario de la coleccion de la pelicula
+
+    // Verificar si la películaId es un valor válido
+    if (!peliculaId || !mongoose.isValidObjectId(peliculaId)) {
+      return res.status(400).json({ error: 'ID de película inválido' })
+    }
+
+    // Verificar si el comentario pertenece al usuario actual
+    if (!isAdmin && comentario.usuario.toString() !== usuarioId) {
+      return res
+        .status(403)
+        .json({ error: 'No tienes permisos para eliminar este comentario' })
+    }
+
+    // Eliminar el comentario de la colección de la película
     const peliculaActualizada = await Pelicula.findByIdAndUpdate(
       peliculaId,
       {
@@ -101,6 +152,13 @@ const eliminarComentario = async (req, res) => {
       },
       { new: true }
     )
+
+    // Verificar si la película fue encontrada y actualizada
+    if (!peliculaActualizada) {
+      return res
+        .status(404)
+        .json({ error: 'La película no existe o no pudo ser actualizada' })
+    }
 
     res.status(200).json({ pelicula: peliculaActualizada })
   } catch (error) {
