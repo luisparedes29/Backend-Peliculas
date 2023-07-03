@@ -22,7 +22,7 @@ const getMovieById = async (req, res) => {
       return res.status(400).json({ error: 'ID de película inválido' })
     }
 
-    const movie = await Pelicula.findById(movieId)
+    const movie = await Pelicula.findById(movieId).populate('comentarios')
     if (!movie) {
       return res.status(404).json({ error: 'La película no existe' })
     }
