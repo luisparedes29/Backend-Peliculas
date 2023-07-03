@@ -163,13 +163,13 @@ const updateMovie = async (req, res) => {
         id,
         updatedMovieData,
         { new: true }
-      )
+      ).populate('comentarios') // Agregar populate para obtener los comentarios
       res.json(updatedMovie)
     } else {
       // Si no se cargó una nueva imagen, actualizar solamente los campos enviados en req.body
       const updatedMovie = await Pelicula.findByIdAndUpdate(id, req.body, {
         new: true,
-      })
+      }).populate('comentarios') // Agregar populate para obtener los comentarios
       res.json(updatedMovie)
     }
   } catch (error) {
