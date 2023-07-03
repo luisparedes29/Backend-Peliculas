@@ -8,6 +8,7 @@ const {
   getAllMovies,
   deleteMovie,
   updateMovie,
+  getLatestMovies,
 } = require('./controllers/movies')
 
 /* GET home page. */
@@ -17,5 +18,6 @@ router
   .post('/create', upload.single('image'), createMovie)
   .delete('/delete/:id', deleteMovie)
   .put('/update/:id', upload.single('image'), updateMovie)
+  .get('/filter/latestMovies', getLatestMovies)
 
 module.exports = router

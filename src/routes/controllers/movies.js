@@ -30,6 +30,18 @@ const getAllMovies = async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 }
+const getLatestMovies = async (req, res) => {
+  try {
+    const latestMovies = await Pelicula.find()
+      .sort({ _id: -1 }) // Ordenar por _id en orden descendente
+      .limit(5) // Limitar a las últimas 5 películas
+      .populate('comentarios')
+
+    res.json({ latestMovies })
+  } catch (error) {
+    res.json(error)
+  }
+}
 
 //Funcion para obtener una pelicula por su ID
 const getMovieById = async (req, res) => {
@@ -41,7 +53,7 @@ const getMovieById = async (req, res) => {
       return res.status(400).json({ error: 'ID de película inválido' })
     }
 
-    const movie = await Pelicula.findById(movieId)
+    const movie = await Pelicula.findById(movieId).populate('comentario')
     if (!movie) {
       return res.status(404).json({ error: 'La película no existe' })
     }
@@ -171,4 +183,5 @@ module.exports = {
   createMovie,
   deleteMovie,
   updateMovie,
+  getLatestMovies,
 }
