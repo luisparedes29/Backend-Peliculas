@@ -6,12 +6,31 @@ const mongoose = require('mongoose')
 //Funcion para obtener todas las peliculas
 const getAllMovies = async (req, res) => {
   try {
-    const movies = await Pelicula.find().populate('comentarios')
-    res.json({ movies })
+    const page = parseInt(req.query.page) || 1 // Página actual (por defecto: 1)
+    const limit = parseInt(req.query.limit) || 15 // Límite de resultados por página (por defecto: 10)
+
+    const skip = (page - 1) * limit // Calcular el número de documentos a saltar
+
+    const moviesCount = await Pelicula.countDocuments() // Contar el número total de documentos
+
+    const movies = await Pelicula.find()
+      .populate('comentarios')
+      .skip(skip)
+      .limit(limit)
+
+    const totalPages = Math.ceil(moviesCount / limit) // Calcular el número total de páginas
+
+    res.json({
+      movies,
+      currentPage: page,
+      totalPages,
+      totalCount: moviesCount,
+    })
   } catch (error) {
-    return error
+    res.status(500).json({ error: error.message })
   }
 }
+
 //Funcion para obtener una pelicula por su ID
 const getMovieById = async (req, res) => {
   try {
