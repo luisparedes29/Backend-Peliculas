@@ -6,12 +6,43 @@ const mongoose = require('mongoose')
 //Funcion para obtener todas las peliculas
 const getAllMovies = async (req, res) => {
   try {
-    const movies = await Pelicula.find().populate('comentarios')
-    res.json({ movies })
+    const page = parseInt(req.query.page) || 1 // Página actual (por defecto: 1)
+    const limit = parseInt(req.query.limit) || 15 // Límite de resultados por página (por defecto: 10)
+
+    const skip = (page - 1) * limit // Calcular el número de documentos a saltar
+
+    const moviesCount = await Pelicula.countDocuments() // Contar el número total de documentos
+
+    const movies = await Pelicula.find()
+      .populate('comentarios')
+      .skip(skip)
+      .limit(limit)
+
+    const totalPages = Math.ceil(moviesCount / limit) // Calcular el número total de páginas
+
+    res.json({
+      movies,
+      currentPage: page,
+      totalPages,
+      totalCount: moviesCount,
+    })
   } catch (error) {
-    return error
+    res.status(500).json({ error: error.message })
   }
 }
+const getLatestMovies = async (req, res) => {
+  try {
+    const latestMovies = await Pelicula.find()
+      .sort({ _id: -1 }) // Ordenar por _id en orden descendente
+      .limit(5) // Limitar a las últimas 5 películas
+      .populate('comentarios')
+
+    res.json({ latestMovies })
+  } catch (error) {
+    res.json(error)
+  }
+}
+
 //Funcion para obtener una pelicula por su ID
 const getMovieById = async (req, res) => {
   try {
@@ -22,7 +53,7 @@ const getMovieById = async (req, res) => {
       return res.status(400).json({ error: 'ID de película inválido' })
     }
 
-    const movie = await Pelicula.findById(movieId)
+    const movie = await Pelicula.findById(movieId).populate('comentario')
     if (!movie) {
       return res.status(404).json({ error: 'La película no existe' })
     }
@@ -132,13 +163,13 @@ const updateMovie = async (req, res) => {
         id,
         updatedMovieData,
         { new: true }
-      )
+      ).populate('comentarios') // Agregar populate para obtener los comentarios
       res.json(updatedMovie)
     } else {
       // Si no se cargó una nueva imagen, actualizar solamente los campos enviados en req.body
       const updatedMovie = await Pelicula.findByIdAndUpdate(id, req.body, {
         new: true,
-      })
+      }).populate('comentarios') // Agregar populate para obtener los comentarios
       res.json(updatedMovie)
     }
   } catch (error) {
@@ -152,4 +183,5 @@ module.exports = {
   createMovie,
   deleteMovie,
   updateMovie,
+  getLatestMovies,
 }
