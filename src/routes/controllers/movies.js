@@ -14,7 +14,15 @@ const getAllMovies = async (req, res) => {
     const moviesCount = await Pelicula.countDocuments() // Contar el número total de documentos
 
     const movies = await Pelicula.find()
-      .populate('comentarios')
+      .populate({
+        path: 'comentarios',
+        select: '-__v',
+        populate: {
+          path: 'usuario',
+          select: '-__v -contraseña -nombre',
+        },
+      })
+      .select('-__v')
       .skip(skip)
       .limit(limit)
 
@@ -35,7 +43,16 @@ const getLatestMovies = async (req, res) => {
     const latestMovies = await Pelicula.find()
       .sort({ _id: -1 }) // Ordenar por _id en orden descendente
       .limit(5) // Limitar a las últimas 5 películas
-      .populate('comentarios')
+      .select('-__v')
+      .populate({
+        path: 'comentarios',
+        select: '-__v', // Excluir el campo __v de los comentarios
+        populate: {
+          path: 'usuario',
+          model: 'Usuario',
+          select: '-__v -contraseña -nombre',
+        },
+      })
 
     res.json({ latestMovies })
   } catch (error) {
@@ -53,13 +70,17 @@ const getMovieById = async (req, res) => {
       return res.status(400).json({ error: 'ID de película inválido' })
     }
 
-    const movie = await Pelicula.findById(movieId).populate({
-      path: 'comentarios',
-      populate: {
-        path: 'usuario',
-        model: 'Usuario',
-      },
-    })
+    const movie = await Pelicula.findById(movieId)
+      .select('-__v') // Excluir el campo __v de la película
+      .populate({
+        path: 'comentarios',
+        select: '-__v', // Excluir el campo __v de los comentarios
+        populate: {
+          path: 'usuario',
+          model: 'Usuario',
+          select: '-__v -nombre -_id -contraseña', // Excluir el campo __v del usuario
+        },
+      })
 
     if (!movie) {
       return res.status(404).json({ error: 'La película no existe' })
