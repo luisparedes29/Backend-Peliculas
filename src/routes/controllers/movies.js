@@ -14,7 +14,7 @@ const getAllMovies = async (req, res) => {
 //Funcion para obtener una pelicula por su ID
 const getMovieById = async (req, res) => {
   try {
-    const movie = await Pelicula.findById(req.params.id)
+    const movie = await Pelicula.findById(req.params.id).populate('comentarios')
     res.json(movie)
   } catch (error) {
     res.json(error)
