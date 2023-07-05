@@ -10,10 +10,14 @@ const validateToken = async (req, res, next) => {
         return;
     }
     try {
-        const admin = await jwt.verify(token, process.env.secret);
-        req.admin = admin.username;
-        console.log(admin)
-        next();
+        const decodedToken = await jwt.verify(token, process.env.secret);
+        req.user = decodedToken.usuario;
+        if (decodedToken.data.isAdmin) {
+
+            next();
+        } else {
+            res.status(403).send('No tienes permiso para acceder a esta ruta.');
+        }
     } catch (error) {
         res.status(403).send('El token no es válido. Por lo tanto, no tienes permiso para acceder a esta ruta.');
         return;

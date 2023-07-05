@@ -92,6 +92,33 @@ const getMovieById = async (req, res) => {
   }
 }
 
+
+const searchMovies = async (req, res) => {
+  try {
+    const { palabraClave } = req.body
+    console.log(palabraClave)
+
+    if (!palabraClave) {
+      return res.status(400).json({ error: 'No se proporcionó una palabra clave' })
+    }
+
+    const movies = await Pelicula.find({
+      $or: [
+        { genero: { $regex: palabraClave, $options: 'i' } },
+        { titulo: { $regex: palabraClave, $options: 'i' } },
+        { sinopsis: { $regex: palabraClave, $options: 'i' } },
+        { actoresPrincipales: { $regex: palabraClave, $options: 'i' } }
+      ]
+    })
+
+    res.json(movies)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+
+
 //funcion para crear pelicula añadiendole el comentario
 const createMovie = async (req, res) => {
   try {
@@ -212,4 +239,5 @@ module.exports = {
   deleteMovie,
   updateMovie,
   getLatestMovies,
+  searchMovies
 }

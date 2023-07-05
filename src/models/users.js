@@ -9,11 +9,16 @@ const usuarioSchema = new Schema({
   usuario: {
     type: String,
     required: true,
+    unique: true
   },
   contraseña: {
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const Usuario = mongoose.model('Usuario', usuarioSchema)
