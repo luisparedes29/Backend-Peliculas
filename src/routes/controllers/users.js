@@ -5,7 +5,7 @@ const { createToken } = require('./jwtCreate');
 
 const registerUser = async (req, res) => {
     try {
-        const { nombre, usuario, contraseña } = req.body;
+        const { nombre, usuario, contraseña, isAdmin } = req.body;
         if (!nombre || !usuario || !contraseña) {
             return res.status(400).json({ error: 'El nombre, usuario y la contraseña son requeridos.' });
         }
@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
             contraseña: hashedPassword
         });
         let token = createToken({ id: user._id, nombre: user.nombre, usuario: user.usuario, isAdmin: user.isAdmin });
-        res.status(200).json({ token, usuario });
+        res.status(200).json({ token, usuario, isAdmin: user.isAdmin});
     } catch (error) {
         console.log(error);
         if (error.code === 11000) {
@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const { usuario, contraseña } = req.body;
+        const { usuario, contraseña, isAdmin } = req.body;
         if (!usuario || !contraseña) {
             return res.status(400).json({ error: 'El usuario y la contraseña son requeridos para iniciar sesión' });
         }
@@ -54,7 +54,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ error: 'La contraseña es incorrecta' });
         }
         let token = createToken({ id: user._id, nombre: user.nombre, usuario: user.usuario, isAdmin: user.isAdmin });
-        res.status(200).json({ token, usuario });
+        res.status(200).json({ token, usuario, isAdmin: user.isAdmin });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Ocurrió un error al intentar iniciar sesión.' });

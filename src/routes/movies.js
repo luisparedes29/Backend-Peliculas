@@ -21,6 +21,6 @@ router
   .delete('/delete/:id', validateToken, deleteMovie)
   .put('/update/:id', validateToken, upload.single('image'), updateMovie)
   .get('/filter/latestMovies', getLatestMovies)
-  .get('/filter/search', searchMovies)
+  .post('/filter/search', searchMovies)
 
 module.exports = router

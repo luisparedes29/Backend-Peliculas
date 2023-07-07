@@ -96,7 +96,6 @@ const getMovieById = async (req, res) => {
 const searchMovies = async (req, res) => {
   try {
     const { palabraClave } = req.body
-    console.log(palabraClave)
 
     if (!palabraClave) {
       return res.status(400).json({ error: 'No se proporcionó una palabra clave' })
