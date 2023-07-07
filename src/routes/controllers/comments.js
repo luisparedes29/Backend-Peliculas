@@ -49,6 +49,7 @@ const agregarComentario = async (req, res) => {
     const nuevoComentario = await Comentario.create({
       usuario: usuarioId, // Suponiendo que tienes el ID del usuario actual disponible en req.usuarioId
       contenido,
+      idPelicula: peliculaId,
     })
 
     // Agregar el comentario al arreglo de comentarios de la película
