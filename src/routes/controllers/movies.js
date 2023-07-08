@@ -78,7 +78,7 @@ const getMovieById = async (req, res) => {
         populate: {
           path: 'usuario',
           model: 'Usuario',
-          select: '-__v -nombre -_id -contraseña', // Excluir el campo __v del usuario
+          select: '-__v -nombre -contraseña', // Excluir el campo __v del usuario
         },
       })
 
@@ -92,13 +92,14 @@ const getMovieById = async (req, res) => {
   }
 }
 
-
 const searchMovies = async (req, res) => {
   try {
     const { palabraClave } = req.body
 
     if (!palabraClave) {
-      return res.status(400).json({ error: 'No se proporcionó una palabra clave' })
+      return res
+        .status(400)
+        .json({ error: 'No se proporcionó una palabra clave' })
     }
 
     const movies = await Pelicula.find({
@@ -106,8 +107,8 @@ const searchMovies = async (req, res) => {
         { genero: { $regex: palabraClave, $options: 'i' } },
         { titulo: { $regex: palabraClave, $options: 'i' } },
         { sinopsis: { $regex: palabraClave, $options: 'i' } },
-        { actoresPrincipales: { $regex: palabraClave, $options: 'i' } }
-      ]
+        { actoresPrincipales: { $regex: palabraClave, $options: 'i' } },
+      ],
     })
 
     res.json(movies)
@@ -115,8 +116,6 @@ const searchMovies = async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 }
-
-
 
 //funcion para crear pelicula añadiendole el comentario
 const createMovie = async (req, res) => {
@@ -238,5 +237,5 @@ module.exports = {
   deleteMovie,
   updateMovie,
   getLatestMovies,
-  searchMovies
+  searchMovies,
 }
