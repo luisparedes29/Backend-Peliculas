@@ -119,7 +119,7 @@ const editarComentario = async (req, res) => {
 //eliminar comentario tanto de la coleccion como de las peliculas
 const eliminarComentario = async (req, res) => {
   try {
-    const { peliculaId, usuarioId, isAdmin } = req.body
+    const { usuarioId, isAdmin } = req.body
     const comentarioId = req.params.id
 
     // Verificar si el comentarioId es un valor válido
@@ -134,7 +134,10 @@ const eliminarComentario = async (req, res) => {
     }
 
     // Verificar si la películaId es un valor válido
-    if (!peliculaId || !mongoose.isValidObjectId(peliculaId)) {
+    if (
+      !comentario.idPelicula ||
+      !mongoose.isValidObjectId(comentario.idPelicula)
+    ) {
       return res.status(400).json({ error: 'ID de película inválido' })
     }
 
@@ -144,10 +147,16 @@ const eliminarComentario = async (req, res) => {
         .status(403)
         .json({ error: 'No tienes permisos para eliminar este comentario' })
     }
+    const comentarioEliminado = await Comentario.findByIdAndDelete(comentarioId)
+    if (!comentarioEliminado) {
+      return res
+        .status(404)
+        .json({ error: 'No se pudo eliminar el comentario' })
+    }
 
     // Eliminar el comentario de la colección de la película
     const peliculaActualizada = await Pelicula.findByIdAndUpdate(
-      peliculaId,
+      comentario.idPelicula,
       {
         $pull: { comentarios: comentarioId },
       },
@@ -161,7 +170,7 @@ const eliminarComentario = async (req, res) => {
         .json({ error: 'La película no existe o no pudo ser actualizada' })
     }
 
-    res.status(200).json({ pelicula: peliculaActualizada })
+    res.status(200).json(comentarioId)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
