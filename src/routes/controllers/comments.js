@@ -55,8 +55,11 @@ const agregarComentario = async (req, res) => {
     // Agregar el comentario al arreglo de comentarios de la película
     pelicula.comentarios.push(nuevoComentario._id)
     await pelicula.save()
+    
+    const newComment = await Comentario.findById(nuevoComentario._id, { __v: 0})
+      .populate({ path: 'usuario', select: 'usuario'})
 
-    res.status(201).json({ nuevoComentario })
+    res.status(201).json({ newComment })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
