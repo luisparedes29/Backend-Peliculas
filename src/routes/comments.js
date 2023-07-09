@@ -23,11 +23,11 @@ router
  *       properties:
  *         _id:
  *           type: string
- *           example: 61dbae02c1474e28863cdb7bd402b2d6
+ *           example: 64a6012b8efc06921c887ea5
  *         usuario:
  *           type: string
  *           description: ID del usuario que realiza el comentario
- *           example: 61dbae02c1474e28-863cdb7bd402b2d6
+ *           example: 64a4b7ac379f99db833ab32b
  *         contenido:
  *           type: string
  *           description: Contenido del comentario
@@ -35,7 +35,7 @@ router
  *         idPelicula:
  *           type: string
  *           description: ID de la película a la que pertenece el comentario
- *           example: 61dbae02c1474e28863cdb7bd402b2d6
+ *           example: 64a5f4998efc06921c887e72
  *
  */
 
@@ -95,7 +95,7 @@ router
  *               usuarioId:
  *                 type: string
  *                 description: ID del usuario que realiza el comentario
- *                 example: 61dbae02c1474e28863cdb7bd402b2d6
+ *                 example: 64a4b7ac379f99db833ab32b
  *               contenido:
  *                 type: string
  *                 description: Contenido del comentario
@@ -169,7 +169,7 @@ router
  *               usuarioId:
  *                 type: string
  *                 description: ID del usuario que realiza la edición del comentario
- *                 example: 61dbae02c1474e28863cdb7bd402b2d6
+ *                 example: 64a4b7ac379f99db833ab32b
  *               nuevoContenido:
  *                 type: string
  *                 description: Nuevo contenido del comentario
@@ -256,7 +256,7 @@ router
  *               usuarioId:
  *                 type: string
  *                 description: ID del usuario que realiza la eliminación del comentario
- *                 example: 61dbae02c1474e28863cdb7bd402b2d6
+ *                 example: 64a4b7ac379f99db833ab32b
  *               isAdmin:
  *                 type: boolean
  *                 description: Indica si el usuario es un administrador
@@ -271,7 +271,7 @@ router
  *               properties:
  *                 comentarioId:
  *                   type: string
- *                   example: 61dbae02c1474e28863cdb7bd402b2d6
+ *                   example: 64a6012b8efc06921c887ea5
  *       400:
  *         description: Datos de entrada inválidos o faltantes
  *         content:

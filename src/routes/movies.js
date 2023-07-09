@@ -27,7 +27,7 @@ const {
  *       properties:
  *         _id:
  *           type: string
- *           example: 61dbae02-c147-4e28-863c-db7bd402b2d6
+ *           example: 64a5f4998efc06921c887e72
  *         genero:
  *           type: string
  *           example: Suspenso
@@ -81,7 +81,9 @@ const {
  * /movies:
  *   get:
  *     tags:
- *       - Get Movies
+ *       - Películas
+ *     summary: Obtener todas las películas
+ *     description: Obtener todas las películas
  *     responses:
  *       200:
  *         description: OK
@@ -117,7 +119,9 @@ const {
  * /movies/{id}:
  *   get:
  *     tags:
- *       - Get Movies
+ *       - Películas
+ *     summary: Obtener una película por su ID
+ *     description: Obtener una película al proporcionar su ID
  *     parameters:
  *       - name: id
  *         in: path
@@ -175,7 +179,9 @@ const {
  * /movies/create:
  *   post:
  *     tags:
- *       - Create Movies
+ *       - Películas
+ *     summary: Crear una película
+ *     description: Crear una película
  *     security:
  *       - bearerAuth: [token]
  *         schema:
@@ -220,8 +226,8 @@ const {
  *         description: OK
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Pelicula'
+ *             example:
+ *               message: "Película creada exitosamente"
  *       400:
  *         description: Bad Request
  *         content:
@@ -252,6 +258,213 @@ const {
  *                 error:
  *                   type: string
  *                   example: "Error al crear la película"
+ * 
+ * 
+ * /movies/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Películas
+ *     security: [bearerAuth: [token]]
+ *     summary: Elimina una película por su ID
+ *     description: Elimina una película de la base de datos según su ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de la película a eliminar
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Película borrada exitosamente
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID de película inválido"
+ *       404:
+ *         description: Not Found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "La película no existe"
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al eliminar la película"
+ * 
+ * /movies/update/{id}:
+ *   put:
+ *     tags:
+ *       - Películas
+ *     summary: Actualiza una película por su ID
+ *     description: Actualiza una película en la base de datos según su ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID de la película a actualizar
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               genero:
+ *                 type: string
+ *                 description: Nuevo género de la película
+ *               titulo:
+ *                 type: string
+ *                 description: Nuevo título de la película
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Nuevo archivo de imagen de la película
+ *               sinopsis:
+ *                 type: string
+ *                 description: Nueva sinopsis de la película
+ *               fechaPublicacion:
+ *                 type: string
+ *                 format: date
+ *                 description: Nueva fecha de publicación de la película (YYYY-MM-DD)
+ *               actoresPrincipales:
+ *                 type: string
+ *                 items:
+ *                   type: string
+ *                 description: Nuevos actores principales de la película
+ *               directores:
+ *                 type: string
+ *                 description: Nuevos directores de la película
+ *               franquicia:
+ *                 type: string
+ *                 description: Nueva franquicia de la película
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Información de la película editada exitosamente
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "ID de película inválido"
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al actualizar la película"
+ * 
+ * /movies/filter/latestMovies:
+ *   get:
+ *     tags:
+ *       - Películas
+ *     summary: Obtiene las últimas 5 películas
+ *     description: Obtiene las últimas películas de la base de datos.
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 latestMovies:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Pelicula'
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al obtener las últimas películas"
+ * 
+ * /movies/filter/search:
+ *   post:
+ *     tags:
+ *       - Películas
+ *     summary: Buscar películas por palabra clave
+ *     description: Busca películas en la base de datos que coincidan con una palabra clave proporcionada.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               palabraClave:
+ *                 type: string
+ *                 description: Palabra clave para buscar películas
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Pelicula'
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No se proporcionó una palabra clave"
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error al buscar películas"
+ * 
  */
 
 router
