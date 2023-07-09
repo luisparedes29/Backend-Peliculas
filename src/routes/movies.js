@@ -10,26 +10,25 @@ const {
   deleteMovie,
   updateMovie,
   getLatestMovies,
-  searchMovies
+  searchMovies,
 } = require('./controllers/movies')
-
 
 /**
  * @openapi
  * components:
- *   securitySchemes: 
- *      bearerAuth: 
- *           type: http 
+ *   securitySchemes:
+ *      bearerAuth:
+ *           type: http
  *           scheme: bearer
  *           bearerFormat: JWT
  *   schemas:
  *     Pelicula:
  *       type: object
  *       properties:
- *         _id: 
+ *         _id:
  *           type: string
  *           example: 61dbae02-c147-4e28-863c-db7bd402b2d6
- *         genero: 
+ *         genero:
  *           type: string
  *           example: Suspenso
  *         titulo:
@@ -40,12 +39,12 @@ const {
  *           format: uri
  *           example: https://res.cloudinary.com/dhdm4ter5/image/upload/v1688597656/qqhozpsdiagjuspdo1cd.jpg
  *         sinopsis:
- *           type: string       
+ *           type: string
  *           example: Este es el ejemplo de una sinopsis
  *         fechaPublicacion:
  *           type: date
  *           example: 2022-04-20
-*         acioresPrincipales:
+ *         acioresPrincipales:
  *           type: string
  *           example: Leonardo DiCaprio
  *         directores:
@@ -77,9 +76,6 @@ const {
  *               contenido: Excelente actuación de los protagonistas
  */
 
-
-
-
 /**
  * @openapi
  * /movies:
@@ -98,8 +94,8 @@ const {
  *                   type: string
  *                   example: OK
  *                 data:
- *                   type: array 
- *                   items: 
+ *                   type: array
+ *                   items:
  *                     $ref: '#/components/schemas/Pelicula'
  *       500:
  *         description: FAILED
@@ -108,16 +104,16 @@ const {
  *             schema:
  *               type: object
  *               properties:
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: FAILED
  *                 data:
  *                   type: object
  *                   properties:
  *                     error:
- *                       type: string 
- *                       example: "Ocurrió un error al buscar las películas en la base de datos" 
- * 
+ *                       type: string
+ *                       example: "Ocurrió un error al buscar las películas en la base de datos"
+ *
  * /movies/{id}:
  *   get:
  *     tags:
@@ -149,14 +145,14 @@ const {
  *             schema:
  *               type: object
  *               properties:
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: NOT_FOUND
  *                 data:
  *                   type: object
  *                   properties:
  *                     error:
- *                       type: string 
+ *                       type: string
  *                       example: "La película no existe"
  *       500:
  *         description: FAILED
@@ -165,17 +161,17 @@ const {
  *             schema:
  *               type: object
  *               properties:
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: FAILED
  *                 data:
  *                   type: object
  *                   properties:
  *                     error:
- *                       type: string 
- *                       example: "Ocurrió un error al buscar la película en la base de datos" 
- * 
- * 
+ *                       type: string
+ *                       example: "Ocurrió un error al buscar la película en la base de datos"
+ *
+ *
  * /movies/create:
  *   post:
  *     tags:
@@ -257,11 +253,6 @@ const {
  *                   type: string
  *                   example: "Error al crear la película"
  */
-
-
-
-
-
 
 router
   .get('/', getAllMovies)
